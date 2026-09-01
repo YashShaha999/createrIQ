@@ -6,7 +6,6 @@ import {
   Users,
   Search,
   RefreshCw,
-  Building2,
   Database,
   User
 } from 'lucide-react';
@@ -38,18 +37,13 @@ function AdminPanel() {
   }, []);
 
   const getRoleBadge = (role) => {
-    switch (role?.toLowerCase()) {
-      case 'admin':
-        return <span className="badge badge-admin"><ShieldCheck size={12} /> Admin</span>;
-      case 'agency':
-        return <span className="badge badge-agency"><Building2 size={12} /> Agency</span>;
-      default:
-        return <span className="badge badge-creator"><User size={12} /> Creator</span>;
+    if (role?.toLowerCase() === 'admin') {
+      return <span className="badge badge-admin"><ShieldCheck size={12} /> Admin</span>;
     }
+    return <span className="badge badge-creator"><User size={12} /> Creator</span>;
   };
 
   const creatorCount = users.filter((u) => u.role === 'creator').length;
-  const agencyCount = users.filter((u) => u.role === 'agency').length;
   const adminCount = users.filter((u) => u.role === 'admin').length;
 
   const filteredUsers = users.filter(
@@ -71,7 +65,7 @@ function AdminPanel() {
             </h1>
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Manage registered platform accounts, role delegations, and database health.
+            Manage registered platform accounts, role permissions, and database health.
           </p>
         </div>
 
@@ -99,7 +93,7 @@ function AdminPanel() {
 
         <div className="card kpi-card">
           <div className="kpi-top">
-            <span className="kpi-label">Creators</span>
+            <span className="kpi-label">Content Creators</span>
             <div className="kpi-icon-box" style={{ background: '#fdf2f8', color: '#db2777' }}>
               <User size={20} />
             </div>
@@ -107,19 +101,6 @@ function AdminPanel() {
           <div className="kpi-value">{creatorCount}</div>
           <div className="kpi-bottom">
             <span className="trend-badge badge-creator">Creator Accounts</span>
-          </div>
-        </div>
-
-        <div className="card kpi-card">
-          <div className="kpi-top">
-            <span className="kpi-label">Agencies</span>
-            <div className="kpi-icon-box" style={{ background: '#eff6ff', color: '#2563eb' }}>
-              <Building2 size={20} />
-            </div>
-          </div>
-          <div className="kpi-value">{agencyCount}</div>
-          <div className="kpi-bottom">
-            <span className="trend-badge badge-agency">Brand Managers</span>
           </div>
         </div>
 

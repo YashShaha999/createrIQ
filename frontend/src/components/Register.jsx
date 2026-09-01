@@ -134,27 +134,18 @@ function Register() {
                 className={`role-option ${formData.role === 'creator' ? 'selected' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'creator' })}
               >
-                <User size={18} color="#db2777" />
+                <User size={20} color="#2563eb" />
                 <div className="role-title">Creator</div>
-                <div className="role-desc">Content Creator</div>
-              </div>
-
-              <div
-                className={`role-option ${formData.role === 'agency' ? 'selected' : ''}`}
-                onClick={() => setFormData({ ...formData, role: 'agency' })}
-              >
-                <Building2 size={18} color="#2563eb" />
-                <div className="role-title">Agency</div>
-                <div className="role-desc">Brand / Manager</div>
+                <div className="role-desc">Content Creator / Influencer</div>
               </div>
 
               <div
                 className={`role-option ${formData.role === 'admin' ? 'selected' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'admin' })}
               >
-                <ShieldCheck size={18} color="#16a34a" />
+                <ShieldCheck size={20} color="#16a34a" />
                 <div className="role-title">Admin</div>
-                <div className="role-desc">Administrator</div>
+                <div className="role-desc">System Administrator</div>
               </div>
             </div>
           </div>

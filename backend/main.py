@@ -161,7 +161,7 @@ async def register(user: UserCreate):
         raise HTTPException(status_code=400, detail="Email is already registered")
     
     role = user.role.lower().strip()
-    if role not in ["creator", "agency", "admin"]:
+    if role not in ["creator", "admin"]:
         role = "creator"
 
     now = datetime.utcnow()
