@@ -8,8 +8,7 @@ import {
   ShieldCheck, 
   LogOut, 
   Menu, 
-  X, 
-  Building2
+  X
 } from 'lucide-react';
 import api from '../api';
 
@@ -47,14 +46,10 @@ function Layout({ children, pageTitle }) {
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
   const getRoleBadge = (role) => {
-    switch (role?.toLowerCase()) {
-      case 'admin':
-        return <span className="badge badge-admin"><ShieldCheck size={12} /> Admin</span>;
-      case 'agency':
-        return <span className="badge badge-agency"><Building2 size={12} /> Agency</span>;
-      default:
-        return <span className="badge badge-creator"><User size={12} /> Creator</span>;
+    if (role?.toLowerCase() === 'admin') {
+      return <span className="badge badge-admin"><ShieldCheck size={12} /> Admin</span>;
     }
+    return <span className="badge badge-creator"><User size={12} /> Creator</span>;
   };
 
   const getInitials = (name) => {

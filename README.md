@@ -29,13 +29,13 @@ Welcome to **CreatorIQ**, a next-generation Creator & Influencer Management and 
 
 - ⚙️ **Admin Control Panel (`/admin`)**:
   - Dedicated administrative dashboard accessible to `admin` accounts.
-  - Total platform metrics, registered user breakdown by role (Creator / Agency / Admin), and user search.
+  - Total platform metrics, registered user breakdown by role (Creator / Admin), and user search.
 
 - 🔑 **Authentication & Security**:
   - JWT Bearer token authentication with bcrypt password encryption.
-  - Role-Based Access Control (Creator, Agency, Admin).
+  - Role-Based Access Control (Creator and Admin).
   - 1-Click Quick Demo Login buttons for instant project evaluation and grading presentations.
-  - Live MongoDB Atlas health indicator pill (`MongoDB Atlas ✅`).
+  - Live MongoDB Atlas health indicator pill (`Database: Connected ✅`).
 
 ---
 
@@ -52,19 +52,19 @@ creatoriq/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Layout.jsx     # Glassmorphic Sidebar & Topbar with live DB health indicator
+│   │   │   ├── Layout.jsx     # Clean Sidebar & Topbar with live DB health indicator
 │   │   │   ├── Dashboard.jsx  # Interactive Analytics Dashboard with KPIs & Recharts
 │   │   │   ├── Analytics.jsx  # In-depth Growth & Engagement metrics page
 │   │   │   ├── Content.jsx    # Content creation, library, and filtering module
 │   │   │   ├── Profile.jsx    # Profile view & edit with embedded admin table
 │   │   │   ├── AdminPanel.jsx # Dedicated Administrator Control Center
-│   │   │   ├── Login.jsx      # Glassmorphic Login with 1-click Demo Fill shortcuts
-│   │   │   └── Register.jsx   # Multi-role registration (Creator / Agency / Admin)
+│   │   │   ├── Login.jsx      # Login with 1-click Demo Fill shortcuts
+│   │   │   └── Register.jsx   # Role registration (Creator / Admin)
 │   │   ├── api.js             # Axios client with JWT request/response interceptors
 │   │   ├── App.jsx            # React Router setup & ProtectedRoute guards
 │   │   ├── main.jsx           # React DOM root entry point
-│   │   └── index.css          # Ultra-modern glassmorphism & dark aesthetic design system
-│   ├── index.html             # HTML5 template with Google Fonts (Outfit & Plus Jakarta Sans)
+│   │   └── index.css          # Clean student project design system & responsive styling
+│   ├── index.html             # HTML5 template with Inter font
 │   ├── package.json           # Dependencies (React 18, React Router, Recharts, Lucide Icons, Axios)
 │   └── vite.config.js         # Vite configuration
 │
@@ -127,7 +127,7 @@ creatoriq/
 |---|---|---|---|
 | `GET` | `/` | API Root & Endpoint Index | Public |
 | `GET` | `/api/health` | MongoDB Atlas Ping & Health Status | Public |
-| `POST` | `/api/auth/register` | Register user (`creator`, `agency`, `admin`) | Public |
+| `POST` | `/api/auth/register` | Register user (`creator`, `admin`) | Public |
 | `POST` | `/api/auth/login` | Authenticate user and obtain Bearer JWT token | Public |
 | `GET` | `/api/auth/me` | Fetch authenticated user profile & social links | Bearer Token |
 | `PUT` | `/api/auth/me` | Update profile information (name, bio, avatar) | Bearer Token |
@@ -149,7 +149,7 @@ creatoriq/
 | Database Design & Connection (MongoDB Atlas) | ✅ Complete |
 | User Registration with Role Selection | ✅ Complete |
 | User Login with JWT Token Storage | ✅ Complete |
-| Role-Based Access Control (Creator / Agency / Admin) | ✅ Complete |
+| Role-Based Access Control (Creator and Admin) | ✅ Complete |
 | Profile Management (View / In-place Edit / Avatar) | ✅ Complete |
 | Responsive Layout (Sidebar + Topbar + Mobile Menu) | ✅ Complete |
 | 4 Dynamic KPI Metric Cards with Growth Badges | ✅ Complete |
