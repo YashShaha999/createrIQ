@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import api from '../api';
-import { Mail, Lock, LogIn, AlertCircle, Sparkles, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle, BarChart3, ShieldCheck, User } from 'lucide-react';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -48,7 +48,6 @@ function Login() {
     setLoading(true);
 
     try {
-      // First try login
       const res = await api.post('/auth/login', { email: demoEmail, password: demoPass });
       if (res.data?.token) {
         localStorage.setItem('token', res.data.token);
@@ -57,7 +56,6 @@ function Login() {
         return;
       }
     } catch (loginErr) {
-      // If demo user doesn't exist yet in DB, auto-register them
       try {
         const regRes = await api.post('/auth/register', {
           email: demoEmail,
@@ -86,24 +84,24 @@ function Login() {
 
         {/* Brand Header */}
         <div className="card-header">
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', background: 'var(--accent-gradient)', marginBottom: '1rem', boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)' }}>
-            <Sparkles size={24} color="#ffffff" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'var(--primary)', marginBottom: '0.85rem' }}>
+            <BarChart3 size={24} color="#ffffff" />
           </div>
-          <h2 className="card-title">Welcome to CreatorIQ</h2>
-          <p className="card-subtitle">Sign in to access your creator analytics dashboard</p>
+          <h2 className="card-title">CreatorIQ Portal</h2>
+          <p className="card-subtitle">Sign in to your creator analytics account</p>
         </div>
 
-        {/* Notice & Error alerts */}
+        {/* Notices and Alerts */}
         {notice && (
-          <div className="alert alert-error" style={{ borderColor: 'rgba(245, 158, 11, 0.4)', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24' }}>
-            <AlertCircle size={18} />
+          <div className="alert" style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}>
+            <AlertCircle size={17} />
             <span>{notice}</span>
           </div>
         )}
 
         {error && (
           <div className="alert alert-error">
-            <AlertCircle size={18} />
+            <AlertCircle size={17} />
             <span>{error}</span>
           </div>
         )}
@@ -112,15 +110,15 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="login-email">
-              <Mail size={15} /> Email Address
+              <Mail size={14} /> Email Address
             </label>
             <div className="input-wrapper">
-              <Mail className="input-icon" size={18} />
+              <Mail className="input-icon" size={16} />
               <input
                 id="login-email"
                 type="email"
                 className="form-input"
-                placeholder="creator@creatoriq.com"
+                placeholder="e.g. alex@creatoriq.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -130,15 +128,15 @@ function Login() {
 
           <div className="form-group">
             <label className="form-label" htmlFor="login-password">
-              <Lock size={15} /> Password
+              <Lock size={14} /> Password
             </label>
             <div className="input-wrapper">
-              <Lock className="input-icon" size={18} />
+              <Lock className="input-icon" size={16} />
               <input
                 id="login-password"
                 type="password"
                 className="form-input"
-                placeholder="Enter password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -150,52 +148,52 @@ function Login() {
             id="btn-login-submit"
             type="submit"
             className="btn btn-primary"
-            style={{ width: '100%', marginTop: '1rem' }}
+            style={{ width: '100%', marginTop: '0.75rem' }}
             disabled={loading}
           >
             {loading ? (
-              <span>Authenticating...</span>
+              <span>Signing In...</span>
             ) : (
               <>
-                <LogIn size={18} />
-                <span>Sign In to Dashboard</span>
+                <LogIn size={16} />
+                <span>Sign In</span>
               </>
             )}
           </button>
         </form>
 
-        {/* 1-Click Demo Evaluation Box */}
+        {/* Quick Demo Test Accounts Box */}
         <div className="demo-logins-box">
-          <div className="demo-title">⚡ Quick 1-Click Demo Accounts:</div>
+          <div className="demo-title">Test Demo Accounts (Quick Fill):</div>
           <div className="demo-buttons">
             <button
               type="button"
               onClick={() => handleQuickDemo('alex.creator@creatoriq.com', 'password123', 'Alex Morgan', 'creator')}
               className="btn btn-secondary btn-sm"
-              style={{ flex: 1, fontSize: '0.78rem' }}
+              style={{ flex: 1 }}
               disabled={loading}
             >
-              <Sparkles size={13} color="#ec4899" />
+              <User size={13} color="#2563eb" />
               <span>Demo Creator</span>
             </button>
             <button
               type="button"
               onClick={() => handleQuickDemo('admin@creatoriq.com', 'adminpass123', 'Sarah Admin', 'admin')}
               className="btn btn-secondary btn-sm"
-              style={{ flex: 1, fontSize: '0.78rem' }}
+              style={{ flex: 1 }}
               disabled={loading}
             >
-              <ShieldCheck size={13} color="#10b981" />
+              <ShieldCheck size={13} color="#16a34a" />
               <span>Demo Admin</span>
             </button>
           </div>
         </div>
 
         {/* Link to Register */}
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <div style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
           Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'none' }}>
-            Create one for free
+          <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+            Register here
           </Link>
         </div>
       </div>

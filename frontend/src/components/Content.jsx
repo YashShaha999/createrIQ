@@ -6,12 +6,6 @@ import {
   PlusCircle,
   Trash2,
   Search,
-  Filter,
-  Eye,
-  Heart,
-  MessageSquare,
-  Share2,
-  Sparkles,
   X,
   CheckCircle2,
   AlertCircle
@@ -79,24 +73,24 @@ function Content() {
 
       const res = await api.post('/content', payload);
       if (res.data?.success) {
-        setStatusMsg({ text: '🎉 Content added successfully!', type: 'success' });
+        setStatusMsg({ text: 'Content post saved successfully!', type: 'success' });
         setForm({ title: '', platform: 'youtube', views: 1000, likes: 120, comments: 25, shares: 10 });
         setModalOpen(false);
         fetchContents();
       }
     } catch (err) {
-      setStatusMsg({ text: err.response?.data?.detail || 'Failed to create content', type: 'error' });
+      setStatusMsg({ text: err.response?.data?.detail || 'Failed to save content.', type: 'error' });
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this content item?')) return;
+    if (!window.confirm('Are you sure you want to delete this content record?')) return;
     try {
       await api.delete(`/content/${id}`);
       setContents(contents.filter((c) => c.id !== id && c._id !== id));
-      setStatusMsg({ text: 'Content deleted.', type: 'success' });
+      setStatusMsg({ text: 'Content record deleted.', type: 'success' });
     } catch (err) {
       console.error('Failed to delete', err);
     }
@@ -122,15 +116,15 @@ function Content() {
   };
 
   return (
-    <Layout pageTitle="Content Performance Management">
-      {/* Header & Controls */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+    <Layout pageTitle="Content Management">
+      {/* Header & New Content Button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.75rem' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800 }}>
-            Content Library & Analytics
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+            Content Library & Records
           </h1>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Track cross-platform posts, view distribution, and engagement metrics.
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Manage and monitor your published videos, posts, and engagement metrics.
           </p>
         </div>
 
@@ -139,37 +133,37 @@ function Content() {
           onClick={() => setModalOpen(true)} 
           className="btn btn-primary"
         >
-          <PlusCircle size={17} />
-          <span>Publish New Content</span>
+          <PlusCircle size={16} />
+          <span>Add New Post</span>
         </button>
       </div>
 
       {/* Notifications */}
       {statusMsg.text && (
         <div className={`alert alert-${statusMsg.type}`}>
-          {statusMsg.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+          {statusMsg.type === 'success' ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}
           <span>{statusMsg.text}</span>
         </div>
       )}
 
       {/* Search & Filter Bar */}
-      <div className="card" style={{ padding: '1.25rem', marginBottom: '1.75rem' }}>
+      <div className="card" style={{ padding: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Search Box */}
-          <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
-            <Search size={17} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+            <Search size={16} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
               placeholder="Search content by title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="form-input"
-              style={{ paddingLeft: '2.5rem' }}
+              style={{ paddingLeft: '2.4rem' }}
             />
           </div>
 
           {/* Platform Filter Buttons */}
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
             {['all', 'youtube', 'instagram', 'tiktok', 'facebook'].map((p) => (
               <button
                 key={p}
@@ -184,25 +178,25 @@ function Content() {
         </div>
       </div>
 
-      {/* Content Table / Cards */}
+      {/* Content Table Card */}
       <div className="card">
         <div className="card-header-flex">
           <h3 className="card-heading">
-            <FileText size={18} color="#6366f1" />
+            <FileText size={18} color="#2563eb" />
             <span>Published Posts ({filteredContents.length})</span>
           </h3>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sorted by latest</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Latest records</span>
         </div>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-            Loading your content records...
+            Loading content records...
           </div>
         ) : filteredContents.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-muted)' }}>
-            <FileText size={36} style={{ margin: '0 auto 1rem auto', opacity: 0.4 }} />
-            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>No content found matching your filters</p>
-            <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Click 'Publish New Content' to log a new piece of content.</p>
+          <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
+            <FileText size={32} style={{ margin: '0 auto 0.75rem auto', opacity: 0.4 }} />
+            <p style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 600 }}>No content posts found</p>
+            <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Click "Add New Post" to log your first content record.</p>
           </div>
         ) : (
           <div className="table-container">
@@ -223,16 +217,16 @@ function Content() {
                 {filteredContents.map((item) => (
                   <tr key={item.id || item._id}>
                     <td>
-                      <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{item.title}</div>
+                      <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{item.title}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}
                       </div>
                     </td>
                     <td>{getPlatformBadge(item.platform)}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 700 }}>{item.views?.toLocaleString() || 0}</td>
-                    <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{item.likes?.toLocaleString() || 0}</td>
-                    <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{item.comments?.toLocaleString() || 0}</td>
-                    <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{item.shares?.toLocaleString() || 0}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 600 }}>{item.views?.toLocaleString() || 0}</td>
+                    <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{item.likes?.toLocaleString() || 0}</td>
+                    <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{item.comments?.toLocaleString() || 0}</td>
+                    <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{item.shares?.toLocaleString() || 0}</td>
                     <td style={{ textAlign: 'right' }}>
                       <span className="trend-badge trend-positive">
                         {item.engagement_rate ? `${item.engagement_rate}%` : '6.5%'}
@@ -242,10 +236,10 @@ function Content() {
                       <button
                         onClick={() => handleDelete(item.id || item._id)}
                         className="btn btn-danger btn-sm"
-                        style={{ padding: '0.35rem 0.65rem' }}
-                        title="Delete Content"
+                        style={{ padding: '0.3rem 0.55rem' }}
+                        title="Delete record"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={13} />
                       </button>
                     </td>
                   </tr>
@@ -256,15 +250,15 @@ function Content() {
         )}
       </div>
 
-      {/* Modal - Create Content */}
+      {/* Modal - Add Content */}
       {modalOpen && (
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Sparkles size={20} color="#6366f1" />
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 700 }}>
-                  Publish New Content
+                <FileText size={20} color="#2563eb" />
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  Add New Content Post
                 </h2>
               </div>
               <button 
@@ -277,12 +271,12 @@ function Content() {
 
             <form onSubmit={handleCreate}>
               <div className="form-group">
-                <label className="form-label">Content Title / Topic</label>
+                <label className="form-label">Post Title</label>
                 <input
                   type="text"
                   className="form-input"
-                  style={{ paddingLeft: '1rem' }}
-                  placeholder="e.g. 10 Mistakes New Creators Make in 2026"
+                  style={{ paddingLeft: '0.85rem' }}
+                  placeholder="e.g. 10 Tips for Modern Web Development"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   required
@@ -293,24 +287,24 @@ function Content() {
                 <label className="form-label">Platform Channel</label>
                 <select
                   className="form-select"
-                  style={{ paddingLeft: '1rem' }}
+                  style={{ paddingLeft: '0.85rem' }}
                   value={form.platform}
                   onChange={(e) => setForm({ ...form, platform: e.target.value })}
                 >
                   <option value="youtube">YouTube</option>
-                  <option value="instagram">Instagram Reels</option>
-                  <option value="tiktok">TikTok Video</option>
-                  <option value="facebook">Facebook Watch</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="facebook">Facebook</option>
                 </select>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
                 <div className="form-group">
                   <label className="form-label">Views</label>
                   <input
                     type="number"
                     className="form-input"
-                    style={{ paddingLeft: '1rem' }}
+                    style={{ paddingLeft: '0.85rem' }}
                     value={form.views}
                     onChange={(e) => setForm({ ...form, views: e.target.value })}
                     min="0"
@@ -323,7 +317,7 @@ function Content() {
                   <input
                     type="number"
                     className="form-input"
-                    style={{ paddingLeft: '1rem' }}
+                    style={{ paddingLeft: '0.85rem' }}
                     value={form.likes}
                     onChange={(e) => setForm({ ...form, likes: e.target.value })}
                     min="0"
@@ -332,13 +326,13 @@ function Content() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
                 <div className="form-group">
                   <label className="form-label">Comments</label>
                   <input
                     type="number"
                     className="form-input"
-                    style={{ paddingLeft: '1rem' }}
+                    style={{ paddingLeft: '0.85rem' }}
                     value={form.comments}
                     onChange={(e) => setForm({ ...form, comments: e.target.value })}
                     min="0"
@@ -350,7 +344,7 @@ function Content() {
                   <input
                     type="number"
                     className="form-input"
-                    style={{ paddingLeft: '1rem' }}
+                    style={{ paddingLeft: '0.85rem' }}
                     value={form.shares}
                     onChange={(e) => setForm({ ...form, shares: e.target.value })}
                     min="0"
@@ -358,14 +352,14 @@ function Content() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
                 <button
                   type="submit"
                   className="btn btn-primary"
                   style={{ flex: 1 }}
                   disabled={submitting}
                 >
-                  {submitting ? 'Saving...' : '💾 Save & Publish'}
+                  {submitting ? 'Saving...' : 'Save Post'}
                 </button>
                 <button
                   type="button"

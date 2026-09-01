@@ -9,11 +9,8 @@ import {
   LogOut,
   Save,
   X,
-  Sparkles,
   Building2,
   ShieldCheck,
-  Users,
-  Calendar,
   CheckCircle2,
   AlertCircle,
   Image as ImageIcon,
@@ -98,7 +95,7 @@ function Profile() {
       setUser(updated);
       localStorage.setItem('user', JSON.stringify(updated));
       setEditMode(false);
-      setStatusMessage({ text: 'Profile updated successfully! ✅', type: 'success' });
+      setStatusMessage({ text: 'Profile updated successfully!', type: 'success' });
     } catch (err) {
       setStatusMessage({
         text: err.response?.data?.detail || 'Failed to update profile.',
@@ -118,8 +115,8 @@ function Profile() {
   if (!user) {
     return (
       <Layout pageTitle="User Profile">
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
-          Loading your profile...
+        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+          Loading profile details...
         </div>
       </Layout>
     );
@@ -128,11 +125,11 @@ function Profile() {
   const getRoleBadge = (role) => {
     switch (role?.toLowerCase()) {
       case 'admin':
-        return <span className="badge badge-admin"><ShieldCheck size={13} /> Administrator</span>;
+        return <span className="badge badge-admin"><ShieldCheck size={12} /> Admin</span>;
       case 'agency':
-        return <span className="badge badge-agency"><Building2 size={13} /> Agency</span>;
+        return <span className="badge badge-agency"><Building2 size={12} /> Agency</span>;
       default:
-        return <span className="badge badge-creator"><Sparkles size={13} /> Creator</span>;
+        return <span className="badge badge-creator"><User size={12} /> Creator</span>;
     }
   };
 
@@ -147,29 +144,29 @@ function Profile() {
   };
 
   return (
-    <Layout pageTitle="Creator Profile">
-      <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+    <Layout pageTitle="My Profile">
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Status Notification */}
         {statusMessage.text && (
           <div className={`alert alert-${statusMessage.type}`}>
-            {statusMessage.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            {statusMessage.type === 'success' ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}
             <span>{statusMessage.text}</span>
           </div>
         )}
 
         {/* Profile Card */}
-        <div className="card" style={{ marginBottom: '2rem' }}>
-          {/* Header Banner */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem', paddingBottom: '1.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.75rem' }}>
+        <div className="card" style={{ marginBottom: '1.75rem' }}>
+          {/* Header Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.25rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
               <div 
                 className="sidebar-avatar" 
                 style={{ 
-                  width: '84px', 
-                  height: '84px', 
-                  fontSize: '2rem', 
-                  boxShadow: 'var(--shadow-glow)', 
-                  border: '3px solid rgba(255,255,255,0.2)' 
+                  width: '72px', 
+                  height: '72px', 
+                  fontSize: '1.75rem', 
+                  border: '2px solid var(--border-dark)',
+                  background: 'var(--primary)'
                 }}
               >
                 {user.profile_picture ? (
@@ -180,14 +177,14 @@ function Profile() {
               </div>
 
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.65rem', fontWeight: 800 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <h2 style={{ fontSize: '1.45rem', fontWeight: 700, color: 'var(--text-main)' }}>
                     {user.full_name || 'Creator User'}
                   </h2>
                   {getRoleBadge(user.role)}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
-                  <Mail size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'middle' }} />
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginTop: '0.2rem' }}>
+                  <Mail size={13} style={{ display: 'inline', marginRight: '5px', verticalAlign: 'middle' }} />
                   {user.email}
                 </div>
               </div>
@@ -199,8 +196,8 @@ function Profile() {
                 onClick={() => setEditMode(!editMode)}
                 className={`btn ${editMode ? 'btn-secondary' : 'btn-primary'}`}
               >
-                {editMode ? <X size={16} /> : <Edit3 size={16} />}
-                <span>{editMode ? 'Cancel Edit' : 'Edit Profile'}</span>
+                {editMode ? <X size={15} /> : <Edit3 size={15} />}
+                <span>{editMode ? 'Cancel' : 'Edit Profile'}</span>
               </button>
             </div>
           </div>
@@ -209,57 +206,57 @@ function Profile() {
           {!editMode ? (
             <div>
               {/* Profile Details Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
                 <div className="demo-group-box">
-                  <div className="demo-group-title">Bio / Creator Statement</div>
-                  <p style={{ color: user.bio ? 'var(--text-primary)' : 'var(--text-muted)', fontSize: '0.95rem' }}>
-                    {user.bio || 'No bio specified yet. Click "Edit Profile" to introduce yourself.'}
+                  <div className="demo-group-title">Bio / Statement</div>
+                  <p style={{ color: user.bio ? 'var(--text-main)' : 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    {user.bio || 'No bio provided yet. Click "Edit Profile" to add one.'}
                   </p>
                 </div>
 
                 <div className="demo-group-box">
                   <div className="demo-group-title">Account Details</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.88rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Account Role:</span>
+                      <span style={{ color: 'var(--text-muted)' }}>Role:</span>
                       <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{user.role}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Joined On:</span>
+                      <span style={{ color: 'var(--text-muted)' }}>Registered:</span>
                       <span style={{ fontWeight: 600 }}>
-                        {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Recently'}
+                        {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Recent'}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Social Channels Configured */}
-              <div className="demo-group-box" style={{ marginBottom: '1.75rem' }}>
+              {/* Linked Social Channels */}
+              <div className="demo-group-box" style={{ marginBottom: '1.5rem' }}>
                 <div className="demo-group-title">
-                  <LinkIcon size={14} /> Linked Social Channels
+                  <LinkIcon size={14} /> Linked Social Accounts
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
-                    <Youtube size={18} color="#ef4444" />
-                    <span>{user.social_links?.youtube || '@youtube_creator'}</span>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
+                    <Youtube size={16} color="#dc2626" />
+                    <span>{user.social_links?.youtube || '@youtube'}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
-                    <Instagram size={18} color="#ec4899" />
-                    <span>{user.social_links?.instagram || '@instagram_handle'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
+                    <Instagram size={16} color="#db2777" />
+                    <span>{user.social_links?.instagram || '@instagram'}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
-                    <Twitter size={18} color="#06b6d4" />
-                    <span>{user.social_links?.twitter || '@twitter_handle'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.88rem' }}>
+                    <Twitter size={16} color="#0284c7" />
+                    <span>{user.social_links?.twitter || '@twitter'}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Logout Action */}
+              {/* Logout Action Button */}
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button id="btn-profile-logout" onClick={handleLogout} className="btn btn-danger">
-                  <LogOut size={16} />
-                  <span>Logout from CreatorIQ</span>
+                  <LogOut size={15} />
+                  <span>Logout</span>
                 </button>
               </div>
             </div>
@@ -268,13 +265,13 @@ function Profile() {
             <form onSubmit={handleUpdate}>
               <div className="form-group">
                 <label className="form-label" htmlFor="edit-full-name">
-                  <User size={15} /> Full Name
+                  <User size={14} /> Full Name
                 </label>
                 <input
                   id="edit-full-name"
                   type="text"
                   className="form-input"
-                  style={{ paddingLeft: '1rem' }}
+                  style={{ paddingLeft: '0.85rem' }}
                   value={form.full_name}
                   onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                   required
@@ -283,12 +280,12 @@ function Profile() {
 
               <div className="form-group">
                 <label className="form-label" htmlFor="edit-bio-input">
-                  Bio / Overview
+                  Bio / Description
                 </label>
                 <textarea
                   id="edit-bio-input"
                   className="form-textarea"
-                  placeholder="Tell brands and followers about your channel..."
+                  placeholder="Tell us about yourself..."
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                   rows={3}
@@ -297,20 +294,20 @@ function Profile() {
 
               <div className="form-group">
                 <label className="form-label" htmlFor="edit-avatar-url">
-                  <ImageIcon size={15} /> Profile Picture (Image URL)
+                  <ImageIcon size={14} /> Profile Picture (URL)
                 </label>
                 <input
                   id="edit-avatar-url"
                   type="url"
                   className="form-input"
-                  style={{ paddingLeft: '1rem' }}
-                  placeholder="https://images.unsplash.com/photo-..."
+                  style={{ paddingLeft: '0.85rem' }}
+                  placeholder="https://example.com/avatar.jpg"
                   value={form.profile_picture}
                   onChange={(e) => setForm({ ...form, profile_picture: e.target.value })}
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.75rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
                 <button
                   id="btn-save-profile-changes"
                   type="submit"
@@ -318,8 +315,8 @@ function Profile() {
                   style={{ flex: 1 }}
                   disabled={saving}
                 >
-                  <Save size={16} />
-                  <span>{saving ? 'Saving...' : 'Save Profile Changes'}</span>
+                  <Save size={15} />
+                  <span>{saving ? 'Saving...' : 'Save Changes'}</span>
                 </button>
                 <button
                   type="button"
@@ -333,25 +330,25 @@ function Profile() {
           )}
         </div>
 
-        {/* Embedded Admin Panel if role === admin */}
+        {/* Embedded Admin Panel if role is admin */}
         {user.role === 'admin' && (
           <div className="card">
             <div className="card-header-flex">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <ShieldCheck size={20} color="#10b981" />
-                <h3 className="card-heading">Admin System Users</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ShieldCheck size={18} color="#16a34a" />
+                <h3 className="card-heading">Registered System Users</h3>
               </div>
               <button
                 onClick={loadAllUsers}
                 className="btn btn-secondary btn-sm"
                 disabled={loadingUsers}
               >
-                {loadingUsers ? 'Refreshing...' : 'Refresh List'}
+                {loadingUsers ? 'Loading...' : 'Refresh'}
               </button>
             </div>
 
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-              All registered users in CreatorIQ database ({adminUsers.length} total).
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+              Total users registered in the database ({adminUsers.length}).
             </p>
 
             <div className="table-container">
@@ -361,16 +358,16 @@ function Profile() {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th>Member Since</th>
+                    <th>Joined</th>
                   </tr>
                 </thead>
                 <tbody>
                   {adminUsers.map((u) => (
                     <tr key={u.id || u.email}>
                       <td style={{ fontWeight: 600 }}>{u.full_name || 'N/A'}</td>
-                      <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
+                      <td style={{ color: 'var(--text-muted)' }}>{u.email}</td>
                       <td>{getRoleBadge(u.role)}</td>
-                      <td style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>
+                      <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                         {u.created_at ? new Date(u.created_at).toLocaleDateString() : 'Recent'}
                       </td>
                     </tr>

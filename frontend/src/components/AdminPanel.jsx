@@ -6,11 +6,9 @@ import {
   Users,
   Search,
   RefreshCw,
-  Sparkles,
   Building2,
   Database,
-  CheckCircle2,
-  AlertCircle
+  User
 } from 'lucide-react';
 
 function AdminPanel() {
@@ -42,11 +40,11 @@ function AdminPanel() {
   const getRoleBadge = (role) => {
     switch (role?.toLowerCase()) {
       case 'admin':
-        return <span className="badge badge-admin"><ShieldCheck size={12} /> Administrator</span>;
+        return <span className="badge badge-admin"><ShieldCheck size={12} /> Admin</span>;
       case 'agency':
         return <span className="badge badge-agency"><Building2 size={12} /> Agency</span>;
       default:
-        return <span className="badge badge-creator"><Sparkles size={12} /> Creator</span>;
+        return <span className="badge badge-creator"><User size={12} /> Creator</span>;
     }
   };
 
@@ -62,23 +60,23 @@ function AdminPanel() {
   );
 
   return (
-    <Layout pageTitle="Administrator Control Center">
+    <Layout pageTitle="Administration Panel">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.75rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <ShieldCheck size={26} color="#10b981" />
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <ShieldCheck size={22} color="#16a34a" />
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-main)' }}>
               System & User Administration
             </h1>
           </div>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Supervise registered platform accounts, role delegations, and database health.
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Manage registered platform accounts, role delegations, and database health.
           </p>
         </div>
 
         <button onClick={fetchAdminData} className="btn btn-secondary" disabled={loading}>
-          <RefreshCw size={16} />
+          <RefreshCw size={15} />
           <span>{loading ? 'Refreshing...' : 'Refresh Records'}</span>
         </button>
       </div>
@@ -88,35 +86,35 @@ function AdminPanel() {
         <div className="card kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Total Accounts</span>
-            <div className="kpi-icon-box" style={{ background: 'var(--gradient-blue)' }}>
-              <Users size={22} />
+            <div className="kpi-icon-box" style={{ background: '#eff6ff', color: '#2563eb' }}>
+              <Users size={20} />
             </div>
           </div>
           <div className="kpi-value">{users.length}</div>
           <div className="kpi-bottom">
             <span className="trend-badge trend-positive">Verified</span>
-            <span className="trend-subtitle">in MongoDB Atlas</span>
+            <span className="trend-subtitle">in Database</span>
           </div>
         </div>
 
         <div className="card kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Creators</span>
-            <div className="kpi-icon-box" style={{ background: 'var(--gradient-creator)' }}>
-              <Sparkles size={22} />
+            <div className="kpi-icon-box" style={{ background: '#fdf2f8', color: '#db2777' }}>
+              <User size={20} />
             </div>
           </div>
           <div className="kpi-value">{creatorCount}</div>
           <div className="kpi-bottom">
-            <span className="trend-badge badge-creator">Talent Base</span>
+            <span className="trend-badge badge-creator">Creator Accounts</span>
           </div>
         </div>
 
         <div className="card kpi-card">
           <div className="kpi-top">
             <span className="kpi-label">Agencies</span>
-            <div className="kpi-icon-box" style={{ background: 'var(--gradient-agency)' }}>
-              <Building2 size={22} />
+            <div className="kpi-icon-box" style={{ background: '#eff6ff', color: '#2563eb' }}>
+              <Building2 size={20} />
             </div>
           </div>
           <div className="kpi-value">{agencyCount}</div>
@@ -127,9 +125,9 @@ function AdminPanel() {
 
         <div className="card kpi-card">
           <div className="kpi-top">
-            <span className="kpi-label">System Admins</span>
-            <div className="kpi-icon-box" style={{ background: 'var(--gradient-admin)' }}>
-              <ShieldCheck size={22} />
+            <span className="kpi-label">Administrators</span>
+            <div className="kpi-icon-box" style={{ background: '#f0fdf4', color: '#16a34a' }}>
+              <ShieldCheck size={20} />
             </div>
           </div>
           <div className="kpi-value">{adminCount}</div>
@@ -141,14 +139,14 @@ function AdminPanel() {
 
       {/* Database Health Card */}
       {health && (
-        <div className="card" style={{ marginBottom: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            <div className="brand-icon-box" style={{ background: 'var(--gradient-emerald)' }}>
-              <Database size={20} color="white" />
+        <div className="card" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div className="brand-icon-box" style={{ background: '#16a34a' }}>
+              <Database size={18} color="white" />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: '1.05rem' }}>Database Cluster Status</div>
-              <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{health.database}</div>
+              <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-main)' }}>Database Status: Active</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>{health.database || 'MongoDB Atlas Cluster Connected'}</div>
             </div>
           </div>
           <div className="db-status-pill">
@@ -162,7 +160,7 @@ function AdminPanel() {
       <div className="card">
         <div className="card-header-flex">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Users size={18} color="#6366f1" />
+            <Users size={18} color="#2563eb" />
             <h3 className="card-heading">Platform Registered Accounts</h3>
           </div>
 
@@ -186,7 +184,7 @@ function AdminPanel() {
                 <th>User Details</th>
                 <th>Email Address</th>
                 <th>Role</th>
-                <th>Bio / Details</th>
+                <th>Bio / Overview</th>
                 <th>Joined Date</th>
               </tr>
             </thead>
@@ -197,7 +195,7 @@ function AdminPanel() {
                     <td>
                       <div style={{ fontWeight: 600 }}>{u.full_name || 'N/A'}</div>
                     </td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
+                    <td style={{ color: 'var(--text-muted)' }}>{u.email}</td>
                     <td>{getRoleBadge(u.role)}</td>
                     <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {u.bio || '—'}
@@ -209,7 +207,7 @@ function AdminPanel() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--text-muted)' }}>
                     No matching users found.
                   </td>
                 </tr>
