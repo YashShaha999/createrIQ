@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
-import { User, Mail, Lock, Sparkles, Building2, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, BarChart3, Building2, ShieldCheck, AlertCircle } from 'lucide-react';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ function Register() {
         navigate('/dashboard');
       }
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Registration failed. Please verify your details.';
+      const msg = err.response?.data?.detail || 'Registration failed. Please check your details.';
       setError(msg);
     } finally {
       setLoading(false);
@@ -45,21 +45,21 @@ function Register() {
 
   return (
     <div className="auth-page-wrapper">
-      <div className="auth-card" style={{ maxWidth: '520px' }}>
+      <div className="auth-card" style={{ maxWidth: '500px' }}>
         <div className="card-glow-bar" />
 
-        {/* Header */}
+        {/* Brand Header */}
         <div className="card-header">
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', background: 'var(--accent-gradient)', marginBottom: '1rem', boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)' }}>
-            <Sparkles size={24} color="#ffffff" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'var(--primary)', marginBottom: '0.85rem' }}>
+            <BarChart3 size={24} color="#ffffff" />
           </div>
-          <h2 className="card-title">Join CreatorIQ</h2>
-          <p className="card-subtitle">Create your account to start managing creators & campaigns</p>
+          <h2 className="card-title">Create an Account</h2>
+          <p className="card-subtitle">Sign up to manage your social channels & analytics</p>
         </div>
 
         {error && (
           <div className="alert alert-error">
-            <AlertCircle size={18} />
+            <AlertCircle size={17} />
             <span>{error}</span>
           </div>
         )}
@@ -68,10 +68,10 @@ function Register() {
           {/* Full Name */}
           <div className="form-group">
             <label className="form-label" htmlFor="register-name">
-              <User size={15} /> Full Name
+              <User size={14} /> Full Name
             </label>
             <div className="input-wrapper">
-              <User className="input-icon" size={18} />
+              <User className="input-icon" size={16} />
               <input
                 id="register-name"
                 name="full_name"
@@ -88,16 +88,16 @@ function Register() {
           {/* Email Address */}
           <div className="form-group">
             <label className="form-label" htmlFor="register-email">
-              <Mail size={15} /> Email Address
+              <Mail size={14} /> Email Address
             </label>
             <div className="input-wrapper">
-              <Mail className="input-icon" size={18} />
+              <Mail className="input-icon" size={16} />
               <input
                 id="register-email"
                 name="email"
                 type="email"
                 className="form-input"
-                placeholder="alex@creatoriq.com"
+                placeholder="e.g. alex@creatoriq.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -108,16 +108,16 @@ function Register() {
           {/* Password */}
           <div className="form-group">
             <label className="form-label" htmlFor="register-password">
-              <Lock size={15} /> Password (Min. 6 chars)
+              <Lock size={14} /> Password (Min. 6 characters)
             </label>
             <div className="input-wrapper">
-              <Lock className="input-icon" size={18} />
+              <Lock className="input-icon" size={16} />
               <input
                 id="register-password"
                 name="password"
                 type="password"
                 className="form-input"
-                placeholder="••••••••"
+                placeholder="Enter a secure password"
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -134,27 +134,27 @@ function Register() {
                 className={`role-option ${formData.role === 'creator' ? 'selected' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'creator' })}
               >
-                <Sparkles size={20} color="#ec4899" />
+                <User size={18} color="#db2777" />
                 <div className="role-title">Creator</div>
-                <div className="role-desc">Talent & influencer</div>
+                <div className="role-desc">Content Creator</div>
               </div>
 
               <div
                 className={`role-option ${formData.role === 'agency' ? 'selected' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'agency' })}
               >
-                <Building2 size={20} color="#3b82f6" />
+                <Building2 size={18} color="#2563eb" />
                 <div className="role-title">Agency</div>
-                <div className="role-desc">Brand manager</div>
+                <div className="role-desc">Brand / Manager</div>
               </div>
 
               <div
                 className={`role-option ${formData.role === 'admin' ? 'selected' : ''}`}
                 onClick={() => setFormData({ ...formData, role: 'admin' })}
               >
-                <ShieldCheck size={20} color="#10b981" />
+                <ShieldCheck size={18} color="#16a34a" />
                 <div className="role-title">Admin</div>
-                <div className="role-desc">Platform manager</div>
+                <div className="role-desc">Administrator</div>
               </div>
             </div>
           </div>
@@ -164,24 +164,17 @@ function Register() {
             id="btn-register-submit"
             type="submit"
             className="btn btn-primary"
-            style={{ width: '100%', marginTop: '1.25rem' }}
+            style={{ width: '100%', marginTop: '1rem' }}
             disabled={loading}
           >
-            {loading ? (
-              <span>Creating Account...</span>
-            ) : (
-              <>
-                <span>Sign Up & Launch Dashboard</span>
-                <ArrowRight size={18} />
-              </>
-            )}
+            {loading ? <span>Creating Account...</span> : <span>Register Account</span>}
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        <div style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'none' }}>
-            Log In
+          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+            Sign In
           </Link>
         </div>
       </div>
