@@ -25,7 +25,7 @@ async def ensure_demo_users():
                 "social_links": {
                     "youtube": "@creatoriq_admin",
                     "instagram": "@creatoriq",
-                    "tiktok": "@creatoriq",
+                    "facebook": "@creatoriq",
                     "twitter": "@creatoriq_hq"
                 },
                 "created_at": now,
@@ -48,7 +48,7 @@ async def ensure_demo_users():
                 "social_links": {
                     "youtube": "@alexcreates",
                     "instagram": "@alex_morgan",
-                    "tiktok": "@alex.tech",
+                    "linkedin": "@alex.tech",
                     "twitter": "@alexmorgan"
                 },
                 "created_at": now,
@@ -86,7 +86,7 @@ async def ensure_demo_users():
                 {
                     "user_id": creator_email,
                     "title": "A Day in the Life of a Software Engineer",
-                    "platform": "tiktok",
+                    "platform": "linkedin",
                     "views": 9800,
                     "likes": 2100,
                     "comments": 190,
