@@ -1,176 +1,129 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
-import { User, Mail, Lock, BarChart3, Building2, ShieldCheck, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { UserPlus, AlertCircle } from "lucide-react";
 
-function Register() {
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    password: '',
-    role: 'creator',
+export default function Register() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "creator" // Only "creator" or "admin"
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      return;
-    }
-
-    setLoading(true);
+    setError("");
+    setSubmitting(true);
     try {
-      const res = await api.post('/auth/register', formData);
-      if (res.data?.token) {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        navigate('/dashboard');
-      }
+      await register(form.name, form.email, form.password, form.role);
+      const role = (form.role || "creator").toLowerCase();
+      navigate(role === "admin" ? "/admin" : "/dashboard");
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Registration failed. Please check your details.';
-      setError(msg);
+      setError(err.response?.data?.detail || "Registration failed. Please try again.");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="auth-page-wrapper">
-      <div className="auth-card" style={{ maxWidth: '500px' }}>
-        <div className="card-glow-bar" />
-
-        {/* Brand Header */}
-        <div className="card-header">
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'var(--primary)', marginBottom: '0.85rem' }}>
-            <BarChart3 size={24} color="#ffffff" />
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+      <div className="w-full max-w-md bg-white border border-slate-200 p-8 rounded-xl shadow-sm">
+        <div className="text-center mb-8">
+          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center mx-auto mb-3 shadow-sm text-white font-bold text-2xl">
+            <span>C</span>
           </div>
-          <h2 className="card-title">Create an Account</h2>
-          <p className="card-subtitle">Sign up to manage your social channels & analytics</p>
+          <h2 className="text-2xl font-bold text-slate-900">Create Account</h2>
+          <p className="text-slate-500 text-sm mt-1">Creator Management & Analytics Portal</p>
         </div>
 
         {error && (
-          <div className="alert alert-error">
-            <AlertCircle size={17} />
+          <div className="flex items-center gap-2 p-3 mb-5 text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded-lg">
+            <AlertCircle size={18} className="shrink-0 text-rose-600" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          {/* Full Name */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="register-name">
-              <User size={14} /> Full Name
+        <form onSubmit={submit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Full Name
             </label>
-            <div className="input-wrapper">
-              <User className="input-icon" size={16} />
-              <input
-                id="register-name"
-                name="full_name"
-                type="text"
-                className="form-input"
-                placeholder="e.g. Alex Morgan"
-                value={formData.full_name}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="e.g. Yash Shaha"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+              className="w-full px-4 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 text-sm"
+            />
           </div>
 
-          {/* Email Address */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="register-email">
-              <Mail size={14} /> Email Address
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Email Address
             </label>
-            <div className="input-wrapper">
-              <Mail className="input-icon" size={16} />
-              <input
-                id="register-email"
-                name="email"
-                type="email"
-                className="form-input"
-                placeholder="e.g. alex@creatoriq.com"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="student@example.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
+              className="w-full px-4 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 text-sm"
+            />
           </div>
 
-          {/* Password */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="register-password">
-              <Lock size={14} /> Password (Min. 6 characters)
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Password (minimum 6 characters)
             </label>
-            <div className="input-wrapper">
-              <Lock className="input-icon" size={16} />
-              <input
-                id="register-password"
-                name="password"
-                type="password"
-                className="form-input"
-                placeholder="Enter a secure password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength={6}
-              />
-            </div>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+              minLength={6}
+              className="w-full px-4 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 text-sm"
+            />
           </div>
 
-          {/* Role Selector Grid */}
-          <div className="form-group">
-            <label className="form-label">Select Account Role</label>
-            <div className="role-grid">
-              <div
-                className={`role-option ${formData.role === 'creator' ? 'selected' : ''}`}
-                onClick={() => setFormData({ ...formData, role: 'creator' })}
-              >
-                <User size={20} color="#2563eb" />
-                <div className="role-title">Creator</div>
-                <div className="role-desc">Content Creator / Influencer</div>
-              </div>
-
-              <div
-                className={`role-option ${formData.role === 'admin' ? 'selected' : ''}`}
-                onClick={() => setFormData({ ...formData, role: 'admin' })}
-              >
-                <ShieldCheck size={20} color="#16a34a" />
-                <div className="role-title">Admin</div>
-                <div className="role-desc">System Administrator</div>
-              </div>
-            </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Select Role
+            </label>
+            <select
+              value={form.role}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 focus:outline-none focus:border-blue-600 text-sm cursor-pointer"
+            >
+              <option value="creator">Creator (Personal Analytics & Content)</option>
+              <option value="admin">Administrator (System & User Management)</option>
+            </select>
           </div>
 
-          {/* Submit Button */}
           <button
-            id="btn-register-submit"
             type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', marginTop: '1rem' }}
-            disabled={loading}
+            disabled={submitting}
+            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-blue-600/20 disabled:opacity-50 text-sm"
           >
-            {loading ? <span>Creating Account...</span> : <span>Register Account</span>}
+            <UserPlus size={18} />
+            {submitting ? "Registering..." : "Register"}
           </button>
         </form>
 
-        <div style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-          Already have an account?{' '}
-          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
-            Sign In
+        <p className="text-slate-500 text-center text-sm mt-6">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+            Login
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );
 }
 
-export default Register;

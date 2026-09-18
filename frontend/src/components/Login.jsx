@@ -1,204 +1,144 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import api from '../api';
-import { Mail, Lock, LogIn, AlertCircle, BarChart3, ShieldCheck, User } from 'lucide-react';
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { LogIn, Sparkles, AlertCircle } from "lucide-react";
 
-function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
+// Student Project Demo Accounts for Viva Evaluation
+const DEMO_ACCOUNTS = [
+  { label: "Demo Creator", email: "creator@test.com", password: "password123", role: "creator" },
+  { label: "Demo Admin",   email: "admin@test.com",   password: "adminpassword123", role: "admin" },
+];
 
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get('expired') === 'true') {
-      setNotice('Your session has expired. Please log in again.');
-    }
-  }, [location]);
+  const navigateByRole = (authResult) => {
+    const role = (authResult?.user?.role || authResult?.role || "").toLowerCase();
+    navigate(role === "admin" ? "/admin" : "/dashboard");
+  };
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault?.();
-    setError('');
-    setNotice('');
-    setLoading(true);
-
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
     try {
-      const res = await api.post('/auth/login', { email, password });
-      if (res.data?.token) {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        navigate('/dashboard');
-      }
+      const res = await login(email, password);
+      navigateByRole(res);
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Invalid email or password. Please try again.';
-      setError(msg);
+      setError(err.response?.data?.detail || "Login failed. Please check your email and password.");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
-  const handleQuickDemo = async (demoEmail, demoPass, demoName, demoRole) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setError('');
-    setLoading(true);
-
+  const handleQuickLogin = async (demo) => {
+    setError("");
+    setSubmitting(true);
     try {
-      const res = await api.post('/auth/login', { email: demoEmail, password: demoPass });
-      if (res.data?.token) {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        navigate('/dashboard');
-        return;
-      }
-    } catch (loginErr) {
-      try {
-        const regRes = await api.post('/auth/register', {
-          email: demoEmail,
-          password: demoPass,
-          full_name: demoName,
-          role: demoRole
-        });
-        if (regRes.data?.token) {
-          localStorage.setItem('token', regRes.data.token);
-          localStorage.setItem('user', JSON.stringify(regRes.data.user));
-          navigate('/dashboard');
-          return;
-        }
-      } catch (regErr) {
-        setError('Unable to authenticate demo account. Please create a new account.');
-      }
+      const res = await login(demo.email, demo.password);
+      navigateByRole(res);
+    } catch (err) {
+      setError(
+        err.response?.data?.detail ||
+        "Could not connect to backend server. Make sure backend is running on port 8000."
+      );
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="auth-page-wrapper">
-      <div className="auth-card">
-        <div className="card-glow-bar" />
-
-        {/* Brand Header */}
-        <div className="card-header">
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'var(--primary)', marginBottom: '0.85rem' }}>
-            <BarChart3 size={24} color="#ffffff" />
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+      <div className="w-full max-w-md bg-white border border-slate-200 p-8 rounded-xl shadow-sm">
+        {/* Brand */}
+        <div className="text-center mb-8">
+          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center mx-auto mb-3 shadow-sm text-white font-bold text-2xl">
+            <span>C</span>
           </div>
-          <h2 className="card-title">CreatorIQ Portal</h2>
-          <p className="card-subtitle">Sign in to your creator analytics account</p>
+          <h2 className="text-2xl font-bold text-slate-900">CreatorIQ Login</h2>
+          <p className="text-slate-500 text-sm mt-1">Creator Management & Analytics Portal</p>
         </div>
 
-        {/* Notices and Alerts */}
-        {notice && (
-          <div className="alert" style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}>
-            <AlertCircle size={17} />
-            <span>{notice}</span>
-          </div>
-        )}
-
         {error && (
-          <div className="alert alert-error">
-            <AlertCircle size={17} />
+          <div className="flex items-center gap-2 p-3 mb-5 text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded-lg">
+            <AlertCircle size={18} className="shrink-0 text-rose-600" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" htmlFor="login-email">
-              <Mail size={14} /> Email Address
+        <form onSubmit={submit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Email Address
             </label>
-            <div className="input-wrapper">
-              <Mail className="input-icon" size={16} />
-              <input
-                id="login-email"
-                type="email"
-                className="form-input"
-                placeholder="e.g. alex@creatoriq.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="student@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 text-sm"
+            />
           </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="login-password">
-              <Lock size={14} /> Password
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Password
             </label>
-            <div className="input-wrapper">
-              <Lock className="input-icon" size={16} />
-              <input
-                id="login-password"
-                type="password"
-                className="form-input"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2.5 rounded-lg bg-white border border-slate-300 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 text-sm"
+            />
           </div>
 
           <button
-            id="btn-login-submit"
             type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', marginTop: '0.75rem' }}
-            disabled={loading}
+            disabled={submitting}
+            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-blue-600/20 disabled:opacity-50 text-sm"
           >
-            {loading ? (
-              <span>Signing In...</span>
-            ) : (
-              <>
-                <LogIn size={16} />
-                <span>Sign In</span>
-              </>
-            )}
+            <LogIn size={18} />
+            {submitting ? "Signing in..." : "Login"}
           </button>
         </form>
 
-        {/* Quick Demo Test Accounts Box */}
-        <div className="demo-logins-box">
-          <div className="demo-title">Test Demo Accounts (Quick Fill):</div>
-          <div className="demo-buttons">
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('alex.creator@creatoriq.com', 'password123', 'Alex Morgan', 'creator')}
-              className="btn btn-secondary btn-sm"
-              style={{ flex: 1 }}
-              disabled={loading}
-            >
-              <User size={13} color="#2563eb" />
-              <span>Demo Creator</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickDemo('admin@creatoriq.com', 'adminpass123', 'Sarah Admin', 'admin')}
-              className="btn btn-secondary btn-sm"
-              style={{ flex: 1 }}
-              disabled={loading}
-            >
-              <ShieldCheck size={13} color="#16a34a" />
-              <span>Demo Admin</span>
-            </button>
+        {/* 1-Click Quick Demo Login for Student Viva / Presentation */}
+        <div className="mt-6 border-t border-slate-200 pt-5">
+          <div className="flex items-center gap-1.5 text-xs text-blue-700 font-semibold mb-3">
+            <Sparkles size={14} />
+            <span>1-Click Demo Login (Viva / Presentation Mode)</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {DEMO_ACCOUNTS.map((d) => (
+              <button
+                type="button"
+                key={d.role}
+                onClick={() => handleQuickLogin(d)}
+                disabled={submitting}
+                className="text-xs bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 border border-slate-200 text-slate-700 py-2.5 px-3 rounded-lg font-medium transition-colors text-center"
+              >
+                {d.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Link to Register */}
-        <div style={{ marginTop: '1.25rem', textAlign: 'center', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
-            Register here
+        <p className="text-slate-500 text-center text-sm mt-6">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 font-semibold hover:underline">
+            Register
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );
 }
 
-export default Login;
