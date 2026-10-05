@@ -39,8 +39,8 @@ export default function Navbar({ title = "Dashboard" }) {
       .catch(() => {});
   };
 
-  useEffect(() => {
-    api.get("/health/db")
+  const checkDbHealth = () => {
+    api.get("/api/health")
       .then((res) => {
         if (res.data?.mongodb === "connected") {
           setDbStatus("connected");
@@ -48,11 +48,26 @@ export default function Navbar({ title = "Dashboard" }) {
           setDbStatus("disconnected");
         }
       })
-      .catch(() => setDbStatus("disconnected"));
+      .catch(() => {
+        // Fallback to /health/db if /api/health is unavailable
+        api.get("/health/db")
+          .then((res) => {
+            setDbStatus(res.data?.mongodb === "connected" ? "connected" : "disconnected");
+          })
+          .catch(() => setDbStatus("disconnected"));
+      });
+  };
+
+  useEffect(() => {
+    checkDbHealth();
+    const dbInterval = setInterval(checkDbHealth, 30000);
 
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 60000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(dbInterval);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
