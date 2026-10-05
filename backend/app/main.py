@@ -13,7 +13,7 @@ app = FastAPI(
 async def on_startup():
     await init_db_indexes()
 
-# CORS Middleware for React frontend on Vite / port 3000 / 5173
+# CORS Middleware for React frontend on Vite / port 3000 / 5173 / Vercel
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -21,8 +21,10 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
-        "*"
+        "https://creater-iq-eight.vercel.app",
+        "https://creater-iq-nine.vercel.app",
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
