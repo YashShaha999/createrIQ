@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.database import ping_database
+from app.core.database import ping_database, init_db_indexes
 from app.api.v1.endpoints import auth, analytics, content, admin, social, notifications
 
 app = FastAPI(
@@ -8,6 +8,10 @@ app = FastAPI(
     description="Creator Analytics & Influencer Management Platform",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+async def on_startup():
+    await init_db_indexes()
 
 # CORS Middleware for React frontend on Vite / port 3000 / 5173
 app.add_middleware(

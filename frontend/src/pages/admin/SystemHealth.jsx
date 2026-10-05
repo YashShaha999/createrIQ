@@ -62,11 +62,11 @@ export default function SystemHealth() {
             />
             <HealthCard
               name="Mock Provider API"
-              port="Port 9000"
+              port={health?.mock_url?.includes("render") ? "Render Cloud" : "Render Cloud"}
               icon={Globe}
               status={health?.mock_api || "ok"}
               ok={health?.mock_api === "ok"}
-              desc="Simulated YouTube, IG, FB & X microservice"
+              desc="Simulated YouTube, IG, FB & X microservice on Render Cloud"
             />
           </div>
 

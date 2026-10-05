@@ -34,7 +34,7 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Mock API Runtime State
-mock-api/app/connections_state.json
+# Mock API (tracked in separate repository: YashShaha999/mock-api)
+mock-api/
 
 

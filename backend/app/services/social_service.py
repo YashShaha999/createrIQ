@@ -60,7 +60,7 @@ async def connect(user_id: str, platform: str):
     if data is None:
         raise HTTPException(
             status_code=503,
-            detail="Mock Social Media API is offline on port 9000. Start mock-api to connect channels."
+            detail="Mock Social Media API is offline or unreachable. Start mock-api or verify Render service to connect channels."
         )
     return data
 
@@ -71,7 +71,7 @@ async def disconnect(user_id: str, platform: str):
     if data is None:
         raise HTTPException(
             status_code=503,
-            detail="Mock Social Media API is offline on port 9000. Start mock-api to manage channels."
+            detail="Mock Social Media API is offline or unreachable. Start mock-api or verify Render service to manage channels."
         )
     return data
 
@@ -110,7 +110,7 @@ async def get_resource(user_id: str, platform: str, resource: str):
 
     raise HTTPException(
         status_code=503,
-        detail=f"Mock Social Media API is offline on port 9000. Cannot fetch {resource} for {platform}."
+        detail=f"Mock Social Media API is offline or unreachable. Cannot fetch {resource} for {platform}."
     )
 
 

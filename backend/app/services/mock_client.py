@@ -21,7 +21,7 @@ async def _get(path: str) -> Any:
                 raise HTTPException(status_code=res.status_code, detail=res.text)
             return res.json()
         except httpx.ConnectError:
-            raise HTTPException(status_code=503, detail="Mock Social API is offline on port 9000")
+            raise HTTPException(status_code=503, detail="Mock Social API is offline or unreachable")
         except HTTPException:
             raise
         except Exception as e:
@@ -35,7 +35,7 @@ async def _post(path: str, data: Optional[Dict[str, Any]] = None) -> Any:
                 raise HTTPException(status_code=res.status_code, detail=res.text)
             return res.json()
         except httpx.ConnectError:
-            raise HTTPException(status_code=503, detail="Mock Social API is offline on port 9000")
+            raise HTTPException(status_code=503, detail="Mock Social API is offline or unreachable")
         except HTTPException:
             raise
         except Exception as e:

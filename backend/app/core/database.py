@@ -20,3 +20,21 @@ async def ping_database() -> bool:
     except Exception as e:
         print(f"MongoDB Atlas ping failed: {e}")
         return False
+
+NOTIFICATION_TTL_SECONDS = 2 * 24 * 3600  # 2 days (172,800 seconds)
+
+async def init_db_indexes():
+    """Ensure MongoDB TTL indexes exist so notifications do not consume database storage."""
+    try:
+        await notifications_collection.create_index(
+            "created_at",
+            expireAfterSeconds=NOTIFICATION_TTL_SECONDS,
+            name="notifications_ttl_2days"
+        )
+        await notifications_collection.create_index(
+            [("user_id", 1), ("created_at", -1)],
+            name="notifications_user_lookup"
+        )
+    except Exception as e:
+        print(f"MongoDB index setup notice: {e}")
+

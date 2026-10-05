@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 from app.core.database import notifications_collection
@@ -5,11 +6,30 @@ from app.utils.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/notifications", tags=["Notifications"])
 
+NOTIFICATION_EXPIRY_DAYS = 2  # Notifications automatically delete after 2 days
+
+async def purge_expired_notifications():
+    """Removes notifications older than 2 days to ensure zero database storage bloat."""
+    try:
+        cutoff = datetime.utcnow() - timedelta(days=NOTIFICATION_EXPIRY_DAYS)
+        await notifications_collection.delete_many({"created_at": {"$lt": cutoff}})
+    except Exception:
+        pass
+
 @router.get("")
 async def list_notifications(user=Depends(get_current_user)):
     uid = str(user.get("id") or user.get("_id"))
+    cutoff = datetime.utcnow() - timedelta(days=NOTIFICATION_EXPIRY_DAYS)
+
+    # Prune expired documents
+    await purge_expired_notifications()
+
     items = []
-    cursor = notifications_collection.find({"user_id": uid}).sort("created_at", -1).limit(20)
+    cursor = notifications_collection.find({
+        "user_id": uid,
+        "created_at": {"$gte": cutoff}
+    }).sort("created_at", -1).limit(20)
+
     async for doc in cursor:
         doc["id"] = str(doc["_id"])
         doc.pop("_id", None)
@@ -19,7 +39,13 @@ async def list_notifications(user=Depends(get_current_user)):
 @router.get("/unread-count")
 async def unread_count(user=Depends(get_current_user)):
     uid = str(user.get("id") or user.get("_id"))
-    count = await notifications_collection.count_documents({"user_id": uid, "read": False})
+    cutoff = datetime.utcnow() - timedelta(days=NOTIFICATION_EXPIRY_DAYS)
+
+    count = await notifications_collection.count_documents({
+        "user_id": uid,
+        "read": False,
+        "created_at": {"$gte": cutoff}
+    })
     return {"count": count}
 
 @router.post("/{notification_id}/read")

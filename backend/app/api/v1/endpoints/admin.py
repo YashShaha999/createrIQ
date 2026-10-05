@@ -129,6 +129,7 @@ async def system_health(_=Depends(admin_only)):
         "backend": "ok",
         "mongodb": "unknown",
         "mock_api": "unknown",
+        "mock_url": mock_url,
         "checked_at": datetime.utcnow().isoformat(),
     }
     try:
@@ -138,7 +139,7 @@ async def system_health(_=Depends(admin_only)):
         health["mongodb"] = f"error: {e}"
 
     try:
-        async with httpx.AsyncClient(timeout=3) as c:
+        async with httpx.AsyncClient(timeout=5.0) as c:
             r = await c.get(f"{mock_url}/")
             health["mock_api"] = "ok" if r.status_code == 200 else f"http {r.status_code}"
     except Exception:

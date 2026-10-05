@@ -99,7 +99,7 @@ export default function PlatformOverview() {
                     online={health?.mongodb === "ok"}
                   />
                   <ServiceTile
-                    name="Mock Social Media Provider (:9000)"
+                    name="Mock Social Media Provider (Render Cloud)"
                     status={health?.mock_api === "ok" ? "Operational" : health?.mock_api || "Checking"}
                     online={health?.mock_api === "ok"}
                   />
