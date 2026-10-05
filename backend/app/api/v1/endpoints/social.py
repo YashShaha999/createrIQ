@@ -11,6 +11,17 @@ def _uid(user: dict) -> str:
 
 # ---------- Connections ----------
 
+@router.get("/wakeup")
+async def wakeup_mock():
+    """Pings the mock social API to wake it up if sleeping on Render."""
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            res = await client.get(f"{social_service.MOCK}/")
+            return {"status": "awake", "url": social_service.MOCK, "code": res.status_code}
+    except Exception as e:
+        return {"status": "waking", "url": social_service.MOCK, "detail": str(e)}
+
 @router.get("/connections")
 async def my_connections(user=Depends(get_current_user)):
     user_id = _uid(user)

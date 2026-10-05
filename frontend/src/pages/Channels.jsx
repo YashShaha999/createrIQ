@@ -3,6 +3,7 @@ import api from "../api/axios";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { Youtube, Instagram, Facebook, Twitter, Check, Loader2, AlertCircle } from "lucide-react";
+import { wakeUpMockApi } from "../utils/mockApiWakeup";
 
 const META = {
   youtube:   { Icon: Youtube,   label: "YouTube",     color: "text-red-500",    accent: "border-red-200 bg-red-50" },
@@ -25,24 +26,46 @@ export default function Channels() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    wakeUpMockApi();
+    load();
+  }, []);
 
   const toggle = async (platform, isConnected) => {
     setBusy(platform);
     setError("");
-    try {
-      const verb = isConnected ? "disconnect" : "connect";
-      const { data: res } = await api.post(`/api/social/${platform}/${verb}`);
-      if (res?.active_connections) {
-        setState((prev) => ({
-          ...(prev || {}),
-          connected: res.active_connections,
-          not_connected: (prev?.all_platforms || []).filter((p) => !res.active_connections.includes(p))
-        }));
+
+    if (!isConnected) {
+      // Direct wake-up call to Render mock API on button click
+      wakeUpMockApi(true);
+    }
+
+    const verb = isConnected ? "disconnect" : "connect";
+
+    const attempt = async (retryCount = 0) => {
+      try {
+        const { data: res } = await api.post(`/api/social/${platform}/${verb}`);
+        if (res?.active_connections) {
+          setState((prev) => ({
+            ...(prev || {}),
+            connected: res.active_connections,
+            not_connected: (prev?.all_platforms || []).filter((p) => !res.active_connections.includes(p))
+          }));
+        }
+        await load();
+      } catch (e) {
+        if (!isConnected && retryCount < 2 && (e.response?.status === 503 || !e.response)) {
+          setError("Waking up Render mock service... retrying connection in a few seconds.");
+          wakeUpMockApi(true);
+          await new Promise((resolve) => setTimeout(resolve, 3500));
+          return await attempt(retryCount + 1);
+        }
+        setError(e.response?.data?.detail || "Action failed");
       }
-      await load();
-    } catch (e) {
-      setError(e.response?.data?.detail || "Action failed");
+    };
+
+    try {
+      await attempt(0);
     } finally {
       setBusy(null);
     }

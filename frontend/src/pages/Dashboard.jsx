@@ -11,6 +11,7 @@ import {
   RefreshCw, ExternalLink, Sparkles, Youtube, Instagram,
   Facebook, Twitter, Check, Loader2, AlertCircle, Link2, Unlink
 } from "lucide-react";
+import { wakeUpMockApi } from "../utils/mockApiWakeup";
 
 // Platform brand colors
 const PIE_COLORS = ["#ef4444", "#ec4899", "#2563eb", "#0f172a"];
@@ -49,6 +50,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    wakeUpMockApi();
     loadData();
   }, []);
 
@@ -64,21 +66,41 @@ export default function Dashboard() {
   const handleToggleChannel = async (platform, isConnected) => {
     setBusyPlatform(platform);
     setChannelError("");
+
+    // Directly ping Render mock API to wake it up if sleeping
+    if (!isConnected) {
+      wakeUpMockApi(true);
+    }
+
+    const verb = isConnected ? "disconnect" : "connect";
+
+    const attemptAction = async (retryCount = 0) => {
+      try {
+        const res = await api.post(`/api/social/${platform}/${verb}`);
+        const nextConnected = Array.isArray(res?.data?.connected)
+          ? res.data.connected
+          : (Array.isArray(res?.data?.active_connections) ? res.data.active_connections : []);
+        setConnections({
+          user_id: res?.data?.user_id || "",
+          all_platforms: ALL_PLATFORMS,
+          connected: nextConnected,
+          not_connected: ALL_PLATFORMS.filter((p) => !nextConnected.includes(p))
+        });
+        await loadData();
+      } catch (err) {
+        // If mock service was sleeping (Render cold start 503 or network error), retry up to 2 times
+        if (!isConnected && retryCount < 2 && (err.response?.status === 503 || !err.response)) {
+          setChannelError("Waking up Render mock service... retrying connection in a few seconds.");
+          wakeUpMockApi(true);
+          await new Promise((resolve) => setTimeout(resolve, 3500));
+          return await attemptAction(retryCount + 1);
+        }
+        setChannelError(err.response?.data?.detail || `Failed to ${isConnected ? "disconnect" : "connect"} ${platform}`);
+      }
+    };
+
     try {
-      const verb = isConnected ? "disconnect" : "connect";
-      const res = await api.post(`/api/social/${platform}/${verb}`);
-      const nextConnected = Array.isArray(res?.data?.connected)
-        ? res.data.connected
-        : (Array.isArray(res?.data?.active_connections) ? res.data.active_connections : []);
-      setConnections({
-        user_id: res?.data?.user_id || "",
-        all_platforms: ALL_PLATFORMS,
-        connected: nextConnected,
-        not_connected: ALL_PLATFORMS.filter((p) => !nextConnected.includes(p))
-      });
-      await loadData();
-    } catch (err) {
-      setChannelError(err.response?.data?.detail || `Failed to ${isConnected ? "disconnect" : "connect"} ${platform}`);
+      await attemptAction(0);
     } finally {
       setBusyPlatform(null);
     }

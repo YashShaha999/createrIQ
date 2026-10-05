@@ -12,7 +12,7 @@ def normalize_platform(platform: str) -> str:
     return "x" if p in ("twitter", "x") else p
 
 async def _get(path: str) -> Any:
-    async with httpx.AsyncClient(timeout=5.0) as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             res = await client.get(f"{MOCK_API_URL}{path}")
             if res.status_code == 403:
@@ -20,7 +20,7 @@ async def _get(path: str) -> Any:
             if res.status_code != 200:
                 raise HTTPException(status_code=res.status_code, detail=res.text)
             return res.json()
-        except httpx.ConnectError:
+        except (httpx.ConnectError, httpx.TimeoutException):
             raise HTTPException(status_code=503, detail="Mock Social API is offline or unreachable")
         except HTTPException:
             raise
@@ -28,13 +28,13 @@ async def _get(path: str) -> Any:
             raise HTTPException(status_code=500, detail=str(e))
 
 async def _post(path: str, data: Optional[Dict[str, Any]] = None) -> Any:
-    async with httpx.AsyncClient(timeout=5.0) as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             res = await client.post(f"{MOCK_API_URL}{path}", json=data or {})
             if res.status_code != 200:
                 raise HTTPException(status_code=res.status_code, detail=res.text)
             return res.json()
-        except httpx.ConnectError:
+        except (httpx.ConnectError, httpx.TimeoutException):
             raise HTTPException(status_code=503, detail="Mock Social API is offline or unreachable")
         except HTTPException:
             raise

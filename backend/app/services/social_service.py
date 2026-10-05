@@ -1,4 +1,5 @@
 import os
+import asyncio
 import httpx
 from fastapi import HTTPException
 
@@ -26,17 +27,26 @@ def _url(platform: str, user_id: str, resource: str) -> str:
 
 
 _client = httpx.AsyncClient(
-    timeout=httpx.Timeout(3.0, connect=1.5),
+    timeout=httpx.Timeout(35.0, connect=25.0),
     limits=httpx.Limits(max_keepalive_connections=20, max_connections=50)
 )
 
 
-async def _request(method: str, url: str):
-    try:
-        r = await _client.request(method, url)
-    except (httpx.ConnectError, httpx.TimeoutException):
-        return None
-    except Exception:
+async def _request(method: str, url: str, retries: int = 1):
+    r = None
+    for attempt in range(retries + 1):
+        try:
+            r = await _client.request(method, url)
+            break
+        except (httpx.ConnectError, httpx.TimeoutException):
+            if attempt < retries:
+                await asyncio.sleep(2.0)
+                continue
+            return None
+        except Exception:
+            return None
+
+    if r is None:
         return None
 
     if r.status_code == 403:
